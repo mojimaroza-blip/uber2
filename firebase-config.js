@@ -1,10 +1,11 @@
-// 1. Replace these placeholder values with your Firebase web app configuration.
-// Firebase Console > Project settings > Your apps > Web app > SDK setup and configuration.
+
 export const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAEEKS8e4ahYDvXH2ShGCElnlmLVhvNbgY",
+  authDomain: "village-ride-33d8a.firebaseapp.com",
+  projectId: "village-ride-33d8a",
+  storageBucket: "village-ride-33d8a.firebasestorage.app",
+  messagingSenderId: "717771048857",
+  appId: "1:717771048857:web:3cdc093041fade9dc3f508",
+  measurementId: "G-EFNNVLCLCV",
+  databaseURL: "https://village-ride-33d8a-default-rtdb.europe-west1.firebasedatabase.app"
 };
