@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.token.admin == true; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isAdmin();
+      // Client may create only their own passenger or pending driver profile.
+      allow create: if isSelf(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.role in ['passenger','driver']
+        && (request.resource.data.role != 'driver' ||
+            (request.resource.data.approvalStatus == 'pending' && request.resource.data.isOnline == false));
+      // Users may update only basic contact details. Role/approval/online status are server controlled.
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','phone']);
+      allow delete: if isAdmin();
+    }
+
+    match /rides/{rideId} {
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.passengerId == request.auth.uid)
+        || (signedIn() && resource.data.driverId == request.auth.uid)
+        || (signedIn() && resource.data.status == 'requested'
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'driver'
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approvalStatus == 'approved'
+            );
+      // Ride creation and state transitions must go through trusted Cloud Functions.
+      allow create, update, delete: if false;
+    }
+  }
+}
